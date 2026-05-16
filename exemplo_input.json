@@ -191,7 +191,7 @@
             "indice": 21,
             "tipo": "texto"
         },
-        "conteudo": "Charlie Chaplin Sem chapéu"
+        "conteudo": "Charlie Chaplin sem chapéu"
     },
     {
         "metadados": {
@@ -205,7 +205,7 @@
             "indice": 23,
             "tipo": "texto"
         },
-        "conteudo": "Winston Churchill Sem chapéu"
+        "conteudo": "Winston Churchill sem chapéu"
     },
     {
         "metadados": {
@@ -219,7 +219,7 @@
             "indice": 25,
             "tipo": "texto"
         },
-        "conteudo": "Marlene Dietrich Sem chapéu"
+        "conteudo": "Marlene Dietrich sem chapéu"
     },
     {
         "metadados": {
@@ -233,7 +233,7 @@
             "indice": 27,
             "tipo": "texto"
         },
-        "conteudo": "Adolf Hitler Sem chapéu"
+        "conteudo": "Adolf Hitler sem chapéu"
     },
     {
         "metadados": {
@@ -247,7 +247,7 @@
             "indice": 29,
             "tipo": "texto"
         },
-        "conteudo": "Adenoid Hynkel Sem chapéu"
+        "conteudo": "Adenoid Hynkel sem chapéu"
     },
     {
         "metadados": {
@@ -261,7 +261,7 @@
             "indice": 31,
             "tipo": "texto"
         },
-        "conteudo": "Martin Luther King Sem chapéu"
+        "conteudo": "Martin Luther King sem chapéu"
     },
     {
         "metadados": {
@@ -275,7 +275,7 @@
             "indice": 33,
             "tipo": "texto"
         },
-        "conteudo": "Marilyn Monroe Sem chapéu"
+        "conteudo": "Marilyn Monroe sem chapéu"
     },
     {
         "metadados": {
@@ -289,7 +289,7 @@
             "indice": 35,
             "tipo": "texto"
         },
-        "conteudo": "Elon Musk Sem chapéu"
+        "conteudo": "Elon Musk sem chapéu"
     },
     {
         "metadados": {
@@ -303,7 +303,7 @@
             "indice": 37,
             "tipo": "texto"
         },
-        "conteudo": "Benito Mussolini Sem chapéu"
+        "conteudo": "Benito Mussolini sem chapéu"
     },
     {
         "metadados": {
@@ -317,6 +317,6 @@
             "indice": 39,
             "tipo": "texto"
         },
-        "conteudo": "Josef Stalin Sem chapéu"
+        "conteudo": "Josef Stalin sem chapéu"
     }
 ]

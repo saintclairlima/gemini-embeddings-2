@@ -64745,7 +64745,7 @@
             "indice": 21,
             "tipo": "texto"
         },
-        "conteudo": "Charlie Chaplin Sem chapéu",
+        "conteudo": "Charlie Chaplin sem chapéu",
         "embeddings": [
             -0.002259506,
             -0.029765796,
@@ -70907,7 +70907,7 @@
             "indice": 23,
             "tipo": "texto"
         },
-        "conteudo": "Winston Churchill Sem chapéu",
+        "conteudo": "Winston Churchill sem chapéu",
         "embeddings": [
             0.016450487,
             -0.01811397,
@@ -77069,7 +77069,7 @@
             "indice": 25,
             "tipo": "texto"
         },
-        "conteudo": "Marlene Dietrich Sem chapéu",
+        "conteudo": "Marlene Dietrich sem chapéu",
         "embeddings": [
             0.018944925,
             -0.030875009,
@@ -83231,7 +83231,7 @@
             "indice": 27,
             "tipo": "texto"
         },
-        "conteudo": "Adolf Hitler Sem chapéu",
+        "conteudo": "Adolf Hitler sem chapéu",
         "embeddings": [
             -0.018268846,
             -0.026588455,
@@ -89393,7 +89393,7 @@
             "indice": 29,
             "tipo": "texto"
         },
-        "conteudo": "Adenoid Hynkel Sem chapéu",
+        "conteudo": "Adenoid Hynkel sem chapéu",
         "embeddings": [
             -0.012025723,
             -0.027309429,
@@ -95555,7 +95555,7 @@
             "indice": 31,
             "tipo": "texto"
         },
-        "conteudo": "Martin Luther King Sem chapéu",
+        "conteudo": "Martin Luther King sem chapéu",
         "embeddings": [
             0.010203465,
             -0.011616169,
@@ -101717,7 +101717,7 @@
             "indice": 33,
             "tipo": "texto"
         },
-        "conteudo": "Marilyn Monroe Sem chapéu",
+        "conteudo": "Marilyn Monroe sem chapéu",
         "embeddings": [
             0.012296248,
             0.01250317,
@@ -107879,7 +107879,7 @@
             "indice": 35,
             "tipo": "texto"
         },
-        "conteudo": "Elon Musk Sem chapéu",
+        "conteudo": "Elon Musk sem chapéu",
         "embeddings": [
             0.002900762,
             0.012343062,
@@ -114041,7 +114041,7 @@
             "indice": 37,
             "tipo": "texto"
         },
-        "conteudo": "Benito Mussolini Sem chapéu",
+        "conteudo": "Benito Mussolini sem chapéu",
         "embeddings": [
             0.010109294,
             -0.017432567,
@@ -120203,7 +120203,7 @@
             "indice": 39,
             "tipo": "texto"
         },
-        "conteudo": "Josef Stalin Sem chapéu",
+        "conteudo": "Josef Stalin sem chapéu",
         "embeddings": [
             0.005179522,
             -0.022559423,
