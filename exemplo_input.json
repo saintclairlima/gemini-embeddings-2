@@ -1,0 +1,322 @@
+[
+    {
+        "metadados": {
+            "indice": 0,
+            "url": "dados/imagens/chaplin_01.png",
+            "tipo": "imagem",
+            "descricao": "Charlie Chaplin de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 1,
+            "url": "dados/imagens/chaplin_02.png",
+            "tipo": "imagem",
+            "descricao": "Charlie Chaplin sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 2,
+            "url": "dados/imagens/churchill_01.png",
+            "tipo": "imagem",
+            "descricao": "Winston Churchill de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 3,
+            "url": "dados/imagens/churchill_02.png",
+            "tipo": "imagem",
+            "descricao": "Winston Churchill sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 4,
+            "url": "dados/imagens/dietrich_01.png",
+            "tipo": "imagem",
+            "descricao": "Marlene Dietrich de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 5,
+            "url": "dados/imagens/dietrich_02.png",
+            "tipo": "imagem",
+            "descricao": "Marlene Dietrich sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 6,
+            "url": "dados/imagens/hitler_01.png",
+            "tipo": "imagem",
+            "descricao": "Adolf Hitler de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 7,
+            "url": "dados/imagens/hitler_02.png",
+            "tipo": "imagem",
+            "descricao": "Adolf Hitler sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 8,
+            "url": "dados/imagens/hynkel_01.png",
+            "tipo": "imagem",
+            "descricao": "Adenoid Hynkel de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 9,
+            "url": "dados/imagens/hynkel_02.png",
+            "tipo": "imagem",
+            "descricao": "Adenoid Hynkel sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 10,
+            "url": "dados/imagens/king_01.png",
+            "tipo": "imagem",
+            "descricao": "Martin Luther King de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 11,
+            "url": "dados/imagens/king_02.png",
+            "tipo": "imagem",
+            "descricao": "Martin Luther King sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 12,
+            "url": "dados/imagens/monroe_01.png",
+            "tipo": "imagem",
+            "descricao": "Marilyn Monroe de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 13,
+            "url": "dados/imagens/monroe_02.png",
+            "tipo": "imagem",
+            "descricao": "Marilyn Monroe sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 14,
+            "url": "dados/imagens/musk_01.png",
+            "tipo": "imagem",
+            "descricao": "Elon Musk de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 15,
+            "url": "dados/imagens/musk_02.png",
+            "tipo": "imagem",
+            "descricao": "Elon Musk sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 16,
+            "url": "dados/imagens/mussolini_01.png",
+            "tipo": "imagem",
+            "descricao": "Benito Mussolini de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 17,
+            "url": "dados/imagens/mussolini_02.png",
+            "tipo": "imagem",
+            "descricao": "Benito Mussolini sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 18,
+            "url": "dados/imagens/stalin_01.png",
+            "tipo": "imagem",
+            "descricao": "Josef Stálin de chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 19,
+            "url": "dados/imagens/stalin_02.png",
+            "tipo": "imagem",
+            "descricao": "Josef Stálin sem chapéu"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 20,
+            "tipo": "texto"
+        },
+        "conteudo": "Charlie Chaplin de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 21,
+            "tipo": "texto"
+        },
+        "conteudo": "Charlie Chaplin Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 22,
+            "tipo": "texto"
+        },
+        "conteudo": "Winston Churchill de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 23,
+            "tipo": "texto"
+        },
+        "conteudo": "Winston Churchill Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 24,
+            "tipo": "texto"
+        },
+        "conteudo": "Marlene Dietrich de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 25,
+            "tipo": "texto"
+        },
+        "conteudo": "Marlene Dietrich Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 26,
+            "tipo": "texto"
+        },
+        "conteudo": "Adolf Hitler de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 27,
+            "tipo": "texto"
+        },
+        "conteudo": "Adolf Hitler Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 28,
+            "tipo": "texto"
+        },
+        "conteudo": "Adenoid Hynkel de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 29,
+            "tipo": "texto"
+        },
+        "conteudo": "Adenoid Hynkel Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 30,
+            "tipo": "texto"
+        },
+        "conteudo": "Martin Luther King de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 31,
+            "tipo": "texto"
+        },
+        "conteudo": "Martin Luther King Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 32,
+            "tipo": "texto"
+        },
+        "conteudo": "Marilyn Monroe de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 33,
+            "tipo": "texto"
+        },
+        "conteudo": "Marilyn Monroe Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 34,
+            "tipo": "texto"
+        },
+        "conteudo": "Elon Musk de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 35,
+            "tipo": "texto"
+        },
+        "conteudo": "Elon Musk Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 36,
+            "tipo": "texto"
+        },
+        "conteudo": "Benito Mussolini de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 37,
+            "tipo": "texto"
+        },
+        "conteudo": "Benito Mussolini Sem chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 38,
+            "tipo": "texto"
+        },
+        "conteudo": "Josef Stalin de chapéu"
+    },
+    {
+        "metadados": {
+            "indice": 39,
+            "tipo": "texto"
+        },
+        "conteudo": "Josef Stalin Sem chapéu"
+    }
+]
