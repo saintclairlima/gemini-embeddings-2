@@ -1,0 +1,105 @@
+[
+    {
+        "metadados": {
+            "indice": 0,
+            "url": "dados/imagens/atomo.png",
+            "tipo": "imagem",
+            "descricao": "Átomo"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 1,
+            "url": "dados/imagens/bigode.png",
+            "tipo": "imagem",
+            "descricao": "Bigode"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 2,
+            "url": "dados/imagens/hitler_03.png",
+            "tipo": "imagem",
+            "descricao": "Adolf Hitler"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 3,
+            "url": "dados/imagens/nazismo.png",
+            "tipo": "imagem",
+            "descricao": "Nazismo"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 4,
+            "url": "dados/imagens/ornitorrinco.png",
+            "tipo": "imagem",
+            "descricao": "Ornitorrinco"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 5,
+            "url": "dados/imagens/sorvete.png",
+            "tipo": "imagem",
+            "descricao": "Sorvete"
+        },
+        "conteudo": null
+    },
+    {
+        "metadados": {
+            "indice": 6,
+            "tipo": "texto"
+        },
+        "conteudo": "Átomo"
+    },
+    {
+        "metadados": {
+            "indice": 7,
+            "tipo": "texto"
+        },
+        "conteudo": "Homem com bigode tipo escovinha (toothbrush moustache)"
+    },
+    {
+        "metadados": {
+            "indice": 8,
+            "tipo": "texto"
+        },
+        "conteudo": "Homem com bigode"
+    },
+    {
+        "metadados": {
+            "indice": 9,
+            "tipo": "texto"
+        },
+        "conteudo": "Adolf Hitler"
+    },
+    {
+        "metadados": {
+            "indice": 10,
+            "tipo": "texto"
+        },
+        "conteudo": "Nazismo"
+    },
+    {
+        "metadados": {
+            "indice": 11,
+            "tipo": "texto"
+        },
+        "conteudo": "Ornitorrinco"
+    },
+    {
+        "metadados": {
+            "indice": 12,
+            "tipo": "texto"
+        },
+        "conteudo": "Sorvete"
+    }
+]
