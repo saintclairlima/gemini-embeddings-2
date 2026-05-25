@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Mapa Vetorial Interativo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root{
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --panel-border: #e2e8f0;
+
+        --text: #0f172a;
+        --muted: #475569;
+
+        --primary: #3b82f6;
+        --primary-strong: #2563eb;
+
+        --x-color: #ef4444;
+        --y-color: #10b981;
+
+        --grid: #f1f5f9;
+        --axis: #cbd5e1;
+
+        --shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+    }
+
+    *{
+        box-sizing: border-box;
+    }
+
+    body{
+        margin:0;
+        min-height:100vh;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
+        padding:20px 16px;
+
+        font-family:'Inter', sans-serif;
+
+        background: var(--bg);
+        color:var(--text);
+    }
+
+    .wrapper{
+        width:100%;
+        max-width:680px;
+    }
+
+    .card{
+        position:relative;
+        background:var(--panel);
+        border:1px solid var(--panel-border);
+        border-radius:24px;
+        padding:24px;
+        box-shadow:var(--shadow);
+    }
+
+    .header{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        gap:24px;
+        margin-bottom:32px;
+    }
+
+    .title-area{
+        max-width:640px;
+    }
+
+    .eyebrow{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:6px 12px;
+        margin-bottom:16px;
+        border-radius:999px;
+        background:#eff6ff;
+        color:#2563eb;
+        font-size:12px;
+        font-weight:500;
+        letter-spacing:0.05em;
+        text-transform:uppercase;
+    }
+
+    h1{
+        margin:0 0 12px;
+        font-size:32px;
+        line-height:1.1;
+        letter-spacing:-0.02em;
+        font-weight:600;
+        color: #0f172a;
+    }
+
+    .subtitle{
+        margin:0;
+        color:var(--muted);
+        font-size:15px;
+        line-height:1.6;
+    }
+
+    .legend{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        min-width:240px;
+        padding:20px;
+        border-radius:16px;
+        background:#f8fafc;
+        border:1px solid #f1f5f9;
+    }
+
+    .legend-title{
+        font-size:12px;
+        font-weight:600;
+        letter-spacing:0.05em;
+        text-transform:uppercase;
+        color:#94a3b8;
+    }
+
+    .legend-item{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        color:#475569;
+        font-size:14px;
+    }
+
+    .legend-dot{
+        width:10px;
+        height:10px;
+        border-radius:50%;
+    }
+
+    .canvas-container{
+        position:relative;
+        padding:12px;
+        border-radius:20px;
+        background:#ffffff;
+        border:1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    }
+
+    canvas{
+        width:100%;
+        max-width:100%;
+        background:#ffffff;
+        border-radius:12px;
+        cursor:default;
+        display:block;
+    }
+
+    .footer{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:20px;
+        margin-top:24px;
+        flex-wrap:wrap;
+    }
+
+    .info{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:12px 16px;
+        border-radius:12px;
+        background:#f8fafc;
+        border:1px solid #e2e8f0;
+        color:#0f172a;
+        font-size:14px;
+        font-weight:600;
+    }
+
+    .info-badge{
+        width:32px;
+        height:32px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:8px;
+        background:#eff6ff;
+        color:#2563eb;
+        font-weight:600;
+    }
+
+    .helper{
+        color:var(--muted);
+        font-size:13px;
+        line-height:1.5;
+        max-width:420px;
+        text-align:right;
+    }
+
+    @media(max-width: 900px){
+        .header{ flex-direction:column; }
+        h1{ font-size:26px; }
+        .legend{ width:100%; }
+        .footer{ flex-direction:column; align-items:stretch; }
+        .helper{ text-align:left; max-width:100%; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <div class="card">
+        <div class="canvas-container">
+            <canvas id="plotCanvas" width="600" height="420"></canvas>
+        </div>
+        <div class="info" id="vectorInfo" style="margin-top: 16px; justify-content: center;"></div>
+    </div>
+
+</div>
+
+<script>
+const dicionarioVeiculos = {
+  "1": {
+    "-5": "corcel", "-4": "puro-sangue", "-3": "garanhão", "-2": "alazão", "-1": "montaria",
+    "0": "cavalo", "1": "rocinante", "2": "pangaré", "3": "matungo", "4": "pileca", "5": "mula manca"
+  },
+  "2": {
+    "-5": "foguete", "-4": "máquina", "-3": "nave", "-2": "motoca", "-1": "motocicleta",
+    "0": "moto", "1": "motinha", "2": "cinquentinha", "3": "lambreta", "4": "mobilete", "5": "moto de noia"
+  },
+  "3": {
+    "-5": "possante", "-4": "bólido", "-3": "carango", "-2": "caranga", "-1": "automóvel",
+    "0": "carro", "1": "lataria", "2": "calhambeque", "3": "ximbica", "4": "lata velha", "5": "ferro-velho ambulante"
+  }
+};
+
+const canvas = document.getElementById('plotCanvas');
+const ctx = canvas.getContext('2d');
+
+const infoText = document.getElementById('vectorInfo');
+
+const origin = { x: 300, y: 340 };
+
+const scaleX = 45;
+const scaleY = 85;
+
+let vector = { x: 0, y: 1 };
+
+const handleRadius = 9;
+let draggedHandle = null;
+
+function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleDomX = canvas.width / rect.width;
+    const scaleDomY = canvas.height / rect.height;
+    return {
+        x: (e.clientX - rect.left) * scaleDomX,
+        y: (e.clientY - rect.top) * scaleDomY
+    };
+}
+
+function drawGrid() {
+
+    ctx.strokeStyle = '#f1f5f9';
+    ctx.lineWidth = 1;
+
+    for(let i = -5; i <= 5; i++) {
+        let px = origin.x + i * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(px, 30);
+        ctx.lineTo(px, canvas.height - 30);
+        ctx.stroke();
+    }
+
+    for(let i = 0; i <= 3; i++) {
+        let py = origin.y - i * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(30, py);
+        ctx.lineTo(canvas.width - 30, py);
+        ctx.stroke();
+    }
+
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(20, origin.y);
+    ctx.lineTo(canvas.width - 20, origin.y);
+
+    ctx.moveTo(origin.x, 20);
+    ctx.lineTo(origin.x, canvas.height - 20);
+    ctx.stroke();
+
+    ctx.fillStyle = '#334155';
+    ctx.font = '500 12px Inter';
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+
+    for(let i = -5; i <= 5; i++){
+        let px = origin.x + i * scaleX;
+        ctx.beginPath();
+        ctx.moveTo(px, origin.y - 4);
+        ctx.lineTo(px, origin.y + 4);
+        ctx.stroke();
+        ctx.fillText(i, px, origin.y + 10);
+    }
+
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+
+    for(let i = 0; i <= 3; i++){
+        let py = origin.y - i * scaleY;
+        ctx.beginPath();
+        ctx.moveTo(origin.x - 4, py);
+        ctx.lineTo(origin.x + 4, py);
+        ctx.stroke();
+
+        if(i !== 0){
+            ctx.fillText(i, origin.x - 12, py);
+        }
+    }
+
+    ctx.font = '600 13px Inter';
+    ctx.fillStyle = '#0f172a';
+
+    ctx.textAlign = 'right';
+    ctx.fillText('Ofensividade', canvas.width - 24, origin.y - 16);
+
+    ctx.save();
+    ctx.translate(origin.x + 24, 30);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'right';
+    ctx.fillText('Transportância-rapidística', 0, 0);
+    ctx.restore();
+}
+
+function drawArrow(fromX, fromY, toX, toY){
+
+    const headLength = 14;
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(
+        toX - headLength * Math.cos(angle - Math.PI / 6),
+        toY - headLength * Math.sin(angle - Math.PI / 6)
+    );
+    ctx.lineTo(
+        toX - headLength * Math.cos(angle + Math.PI / 6),
+        toY - headLength * Math.sin(angle + Math.PI / 6)
+    );
+    ctx.closePath();
+
+    ctx.fillStyle = '#3b82f6';
+    ctx.fill();
+}
+
+function drawHandle(x, y, color){
+
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    
+    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 2;
+
+    ctx.arc(x, y, handleRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+}
+
+function drawTipLabel(x, y, text){
+
+    ctx.font = '600 13px Inter';
+
+    const paddingX = 12;
+    const paddingY = 8;
+    const metrics = ctx.measureText(text);
+    const width = metrics.width;
+    
+    let boxX = x + 16;
+    const boxY = y - 24;
+
+    if (boxX + width + paddingX * 2 > canvas.width - 10) {
+        boxX = x - width - paddingX * 2 - 16;
+    }
+
+    ctx.shadowColor = 'rgba(0,0,0,0.08)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetY = 4;
+
+    ctx.fillStyle = '#ffffff';
+
+    ctx.beginPath();
+    ctx.roundRect(
+        boxX,
+        boxY,
+        width + paddingX * 2,
+        32,
+        8
+    );
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#0f172a';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, boxX + paddingX, boxY + 16);
+}
+
+function updateAndRender(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    drawGrid();
+
+    let tipX = origin.x + vector.x * scaleX;
+    let tipY = origin.y - vector.y * scaleY;
+
+    let hxPos = { x: tipX, y: origin.y };
+    let hyPos = { x: origin.x, y: tipY };
+
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4,4]);
+
+    ctx.beginPath();
+    ctx.moveTo(tipX, origin.y);
+    ctx.lineTo(tipX, tipY);
+    ctx.lineTo(origin.x, tipY);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    drawArrow(origin.x, origin.y, tipX, tipY);
+
+    drawHandle(hxPos.x, hxPos.y, '#ef4444');
+    drawHandle(hyPos.x, hyPos.y, '#10b981');
+
+    if (
+        Number.isInteger(vector.x) &&
+        Number.isInteger(vector.y)
+    ) {
+        if (
+            vector.x >= -5 &&
+            vector.x <= 5 &&
+            vector.y >= 0 &&
+            vector.y <= 3
+        ) {
+            let cat = dicionarioVeiculos[vector.y.toString()];
+            if(cat && cat[vector.x.toString()]){
+                drawTipLabel(tipX, tipY, cat[vector.x.toString()]);
+            }
+        }
+    }
+
+    if (infoText) {
+        infoText.innerHTML = `
+            <div class="info-badge">V</div>
+            Vetor atual · [${vector.x}, ${vector.y}]
+        `;
+    }
+}
+
+function isMouseOverHandle(mouseX, mouseY, handleX, handleY){
+
+    const dist = Math.hypot(
+        mouseX - handleX,
+        mouseY - handleY
+    );
+
+    return dist <= handleRadius + 4;
+}
+
+canvas.addEventListener('mousedown', (e) => {
+
+    const mouse = getMousePos(e);
+    const mouseX = mouse.x;
+    const mouseY = mouse.y;
+
+    let tipX = origin.x + vector.x * scaleX;
+    let tipY = origin.y - vector.y * scaleY;
+
+    if(isMouseOverHandle(mouseX, mouseY, tipX, origin.y)){
+
+        draggedHandle = 'X';
+
+    } else if (
+        isMouseOverHandle(mouseX, mouseY, origin.x, tipY)
+    ) {
+
+        draggedHandle = 'Y';
+    }
+});
+
+canvas.addEventListener('mousemove', (e) => {
+
+    const mouse = getMousePos(e);
+    const mouseX = mouse.x;
+    const mouseY = mouse.y;
+
+    let tipX = origin.x + vector.x * scaleX;
+    let tipY = origin.y - vector.y * scaleY;
+
+    if(
+        isMouseOverHandle(mouseX, mouseY, tipX, origin.y) ||
+        isMouseOverHandle(mouseX, mouseY, origin.x, tipY)
+    ){
+        canvas.style.cursor = 'pointer';
+    } else {
+        canvas.style.cursor = 'default';
+    }
+
+    if(!draggedHandle) return;
+
+    const snapPixels = 12;
+
+    if(draggedHandle === 'X'){
+
+        let logicalX = (mouseX - origin.x) / scaleX;
+
+        let roundX = Math.round(logicalX);
+
+        if(
+            Math.abs(logicalX - roundX) * scaleX < snapPixels
+        ){
+            vector.x = roundX;
+        } else {
+            vector.x = Number(logicalX.toFixed(2));
+        }
+
+    } else if(draggedHandle === 'Y'){
+
+        let logicalY = (origin.y - mouseY) / scaleY;
+
+        let roundY = Math.round(logicalY);
+
+        if(
+            Math.abs(logicalY - roundY) * scaleY < snapPixels
+        ){
+            vector.y = roundY;
+        } else {
+            vector.y = Number(logicalY.toFixed(2));
+        }
+    }
+
+    updateAndRender();
+});
+
+window.addEventListener('mouseup', () => {
+    draggedHandle = null;
+});
+
+updateAndRender();
+</script>
+
+</body>
+</html>

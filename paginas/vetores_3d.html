@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mapa Vetorial 3D Interativo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --panel-border: #e2e8f0;
+        --text: #0f172a;
+        --muted: #475569;
+        --shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 16px;
+        font-family: 'Inter', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+    }
+
+    .wrapper {
+        width: 100%;
+        max-width: 800px;
+        z-index: 10;
+    }
+
+    .card {
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+    }
+
+    .canvas-container {
+        position: relative;
+        height: 500px;
+        border-radius: 20px;
+        background: #fafafa;
+        border: 1px solid #e2e8f0;
+        box-shadow: inset 0 4px 6px -1px rgba(0,0,0,0.02);
+        overflow: hidden;
+    }
+
+    /* O canvas do Three.js preencherá o container */
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+    }
+
+    .info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 16px;
+    }
+
+    .info-badge {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+    .instructions {
+        text-align: center;
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 16px;
+    }
+
+    /* Rótulos HTML flutuantes sobre o 3D */
+    .html-label {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+        font-weight: 500;
+        color: #64748b;
+        pointer-events: none; /* Para não bloquear o clique no 3D */
+        user-select: none;
+    }
+
+    .axis-title {
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .controls {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        background: #ffffff;
+        padding: 12px 20px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+    }
+
+    .control-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        transition: opacity 0.2s;
+    }
+
+    .control-label input {
+        cursor: pointer;
+        width: 16px;
+        height: 16px;
+        accent-color: currentColor;
+    }
+    
+    .control-label:hover {
+        opacity: 0.8;
+    }
+
+    #tooltip {
+        position: absolute;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #0f172a;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        pointer-events: none;
+        transform: translate(15px, -30px);
+        opacity: 0;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+        z-index: 20;
+    }
+    
+    #tooltip.visible {
+        opacity: 1;
+    }
+
+    /* Cores dos eixos (usadas nos textos dinâmicos via JS) */
+    .color-x { color: #ef4444; }
+    .color-y { color: #10b981; }
+    .color-z { color: #3b82f6; }
+</style>
+
+<!-- Import Map para carregar o Three.js e seus Addons como Módulos ES -->
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/"
+        }
+    }
+</script>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="instructions">
+        <strong>Dica:</strong> Arraste as bolinhas nos eixos para alterar o vetor. <strong>Clique e arraste o fundo</strong> para girar a câmera.
+    </div>
+
+    <div class="controls">
+        <label class="control-label color-x">
+            <input type="checkbox" id="checkX" checked> Eixo X
+        </label>
+        <label class="control-label color-y">
+            <input type="checkbox" id="checkY" checked> Eixo Y
+        </label>
+        <label class="control-label color-z">
+            <input type="checkbox" id="checkZ" checked> Eixo Z
+        </label>
+    </div>
+
+    <div class="card">
+        <div class="canvas-container" id="container3d">
+            <div id="tooltip">Rótulo</div>
+            <!-- Rótulos dinâmicos serão inseridos aqui pelo JS -->
+        </div>
+        <div class="info" id="vectorInfo"></div>
+    </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// --- DADOS DO DOMÍNIO ---
+const dicionarioVeiculos = {
+  "1": { // Y=1: Cavalo
+    "-5": "corcel", "-4": "puro-sangue", "-3": "garanhão", "-2": "alazão", "-1": "montaria",
+    "0": "cavalo", "1": "rocinante", "2": "pangaré", "3": "matungo", "4": "pileca", "5": "mula manca"
+  },
+  "2": { // Y=2: Moto
+    "-5": "foguete", "-4": "máquina", "-3": "nave", "-2": "motoca", "-1": "motocicleta",
+    "0": "moto", "1": "motinha", "2": "cinquentinha", "3": "lambreta", "4": "mobilete", "5": "moto de noia"
+  },
+  "3": { // Y=3: Carro
+    "-5": "possante", "-4": "bólido", "-3": "carango", "-2": "caranga", "-1": "automóvel",
+    "0": "carro", "1": "lataria", "2": "calhambeque", "3": "ximbica", "4": "lata velha", "5": "ferro-velho ambulante"
+  }
+};
+
+// Modificador Z para a 3ª dimensão (Aparência/Estado)
+const modificadorZ = {
+    "-2": " enferrujado(a)",
+    "-1": " batido(a)",
+    "0": "", // Padrão, não adiciona texto
+    "1": " novo(a)",
+    "2": " de luxo"
+};
+
+// --- CONFIGURAÇÃO THREE.JS ---
+const container = document.getElementById('container3d');
+const infoText = document.getElementById('vectorInfo');
+const tooltip = document.getElementById('tooltip');
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#fafafa');
+
+// Câmera
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+camera.position.set(12, 10, 15);
+
+// Renderizador
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Controles de Órbita (Girar Câmera)
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+// Restringir um pouco para não ir para debaixo do gráfico
+controls.maxPolarAngle = Math.PI / 2 + 0.1;
+
+// --- ESTADO DO VETOR ---
+// O vetor principal (X: Ofensividade, Y: Transportância, Z: Aparência)
+let vec = new THREE.Vector3(0, 1, 0);
+
+// Limites
+const bounds = {
+    x: { min: -5, max: 5 },
+    y: { min: 0, max: 3 },
+    z: { min: -2, max: 2 }
+};
+
+// --- MATERIAIS E CORES ---
+const colorX = 0xef4444; // Vermelho
+const colorY = 0x10b981; // Verde
+const colorZ = 0x3b82f6; // Azul
+const colorVec = 0x4f46e5; // Índigo (Vetor Principal)
+
+const handleMaterialX = new THREE.MeshBasicMaterial({ color: colorX });
+const handleMaterialY = new THREE.MeshBasicMaterial({ color: colorY });
+const handleMaterialZ = new THREE.MeshBasicMaterial({ color: colorZ });
+
+const lineMaterialDashed = new THREE.LineDashedMaterial({
+    color: 0x94a3b8, dashSize: 0.2, gapSize: 0.2
+});
+
+// --- ESTADO DOS EIXOS (CONTROLE 2D/3D) ---
+const activeAxes = { x: true, y: true, z: true };
+
+// --- OBJETOS DA CENA ---
+// 1. Eixos (Linhas)
+function createAxisLine(p1, p2, color) {
+    const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+    const mat = new THREE.LineBasicMaterial({ color: color, linewidth: 2 });
+    return new THREE.Line(geo, mat);
+}
+
+const lineX = createAxisLine(new THREE.Vector3(bounds.x.min, 0, 0), new THREE.Vector3(bounds.x.max, 0, 0), colorX);
+const lineY = createAxisLine(new THREE.Vector3(0, bounds.y.min, 0), new THREE.Vector3(0, bounds.y.max, 0), colorY);
+const lineZ = createAxisLine(new THREE.Vector3(0, 0, bounds.z.min), new THREE.Vector3(0, 0, bounds.z.max), colorZ);
+scene.add(lineX, lineY, lineZ);
+
+// 2. Alças interativas (Esferas) - Tamanho reduzido para 0.15
+const sphereGeo = new THREE.SphereGeometry(0.15, 32, 32);
+const handleX = new THREE.Mesh(sphereGeo, handleMaterialX);
+const handleY = new THREE.Mesh(sphereGeo, handleMaterialY);
+const handleZ = new THREE.Mesh(sphereGeo, handleMaterialZ);
+scene.add(handleX, handleY, handleZ);
+
+// 3. Seta do Vetor Principal
+const arrowHelper = new THREE.ArrowHelper(
+    vec.clone().normalize(),
+    new THREE.Vector3(0, 0, 0),
+    vec.length(),
+    colorVec,
+    0.6,
+    0.3
+);
+scene.add(arrowHelper);
+
+// 4. Linhas de Projeção (Tracejadas para dar noção de 3D)
+const projectionGeo = new THREE.BufferGeometry();
+const projectionLines = new THREE.LineSegments(projectionGeo, lineMaterialDashed);
+scene.add(projectionLines);
+
+// Lista de rótulos HTML para atualizar
+const htmlLabels = [];
+
+function createHTMLText(text, position, className, axisTarget) {
+    const el = document.createElement('div');
+    el.className = `html-label ${className}`;
+    el.innerText = text;
+    container.appendChild(el);
+    htmlLabels.push({ element: el, pos: position, axis: axisTarget });
+}
+
+// Inicializar marcações (Ticks) e Nomes dos Eixos
+function initLabels() {
+    // Ticks X
+    for (let i = bounds.x.min; i <= bounds.x.max; i++) {
+        createHTMLText(i, new THREE.Vector3(i, -0.4, 0), 'color-x', 'x');
+    }
+    // Ticks Y
+    for (let i = bounds.y.min; i <= bounds.y.max; i++) {
+        if(i !== 0) createHTMLText(i, new THREE.Vector3(-0.4, i, 0), 'color-y', 'y');
+    }
+    // Ticks Z
+    for (let i = bounds.z.min; i <= bounds.z.max; i++) {
+        if(i !== 0) createHTMLText(i, new THREE.Vector3(0, -0.4, i), 'color-z', 'z');
+    }
+
+    // Nomes dos Eixos
+    createHTMLText('Ofensividade (X)', new THREE.Vector3(bounds.x.max + 1, 0, 0), 'axis-title color-x', 'x');
+    createHTMLText('Transportância (Y)', new THREE.Vector3(0, bounds.y.max + 0.5, 0), 'axis-title color-y', 'y');
+    createHTMLText('Aparência (Z)', new THREE.Vector3(0, 0, bounds.z.max + 1), 'axis-title color-z', 'z');
+}
+initLabels();
+
+// --- CONTROLES DA INTERFACE (CHECKBOXES) ---
+document.getElementById('checkX').addEventListener('change', (e) => {
+    activeAxes.x = e.target.checked;
+    updateSceneState();
+});
+document.getElementById('checkY').addEventListener('change', (e) => {
+    activeAxes.y = e.target.checked;
+    updateSceneState();
+});
+document.getElementById('checkZ').addEventListener('change', (e) => {
+    activeAxes.z = e.target.checked;
+    updateSceneState();
+});
+
+// --- LÓGICA DE INTERAÇÃO (ARRASTAR) ---
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let draggedHandle = null;
+const dragPlane = new THREE.Plane();
+
+// Aumenta ligeiramente a tolerância do raycaster para facilitar o clique nas esferas menores
+raycaster.params.Mesh.threshold = 0.2; 
+
+// Atualiza o estado visual da cena com base no vetor
+function updateSceneState() {
+    // Vetor de renderização visual (achata visualmente sem destruir os dados lógicos)
+    const renderVec = new THREE.Vector3(
+        activeAxes.x ? vec.x : 0,
+        activeAxes.y ? vec.y : 0,
+        activeAxes.z ? vec.z : 0
+    );
+
+    // Visibilidade das linhas dos eixos
+    lineX.visible = activeAxes.x;
+    lineY.visible = activeAxes.y;
+    lineZ.visible = activeAxes.z;
+
+    // Visibilidade e posição das alças
+    handleX.visible = activeAxes.x;
+    handleY.visible = activeAxes.y;
+    handleZ.visible = activeAxes.z;
+
+    handleX.position.set(vec.x, 0, 0);
+    handleY.position.set(0, vec.y, 0);
+    handleZ.position.set(0, 0, vec.z);
+
+    // Atualiza Seta usando o vetor visual
+    const len = renderVec.length();
+    if (len > 0.001) {
+        arrowHelper.setDirection(renderVec.clone().normalize());
+        arrowHelper.setLength(len, 0.6, 0.3);
+        arrowHelper.visible = true;
+    } else {
+        arrowHelper.visible = false;
+    }
+
+    // Atualiza linhas de projeção usando o vetor visual
+    const points = [];
+    points.push(
+        new THREE.Vector3(renderVec.x, 0, 0), new THREE.Vector3(renderVec.x, 0, renderVec.z),
+        new THREE.Vector3(0, 0, renderVec.z), new THREE.Vector3(renderVec.x, 0, renderVec.z),
+        new THREE.Vector3(renderVec.x, 0, renderVec.z), new THREE.Vector3(renderVec.x, renderVec.y, renderVec.z),
+        new THREE.Vector3(renderVec.x, renderVec.y, renderVec.z), new THREE.Vector3(renderVec.x, renderVec.y, 0),
+        new THREE.Vector3(renderVec.x, renderVec.y, renderVec.z), new THREE.Vector3(0, renderVec.y, renderVec.z),
+        new THREE.Vector3(renderVec.x, renderVec.y, 0), new THREE.Vector3(renderVec.x, 0, 0),
+        new THREE.Vector3(0, renderVec.y, renderVec.z), new THREE.Vector3(0, 0, renderVec.z)
+    );
+    projectionGeo.setFromPoints(points);
+    projectionLines.computeLineDistances(); // Aqui é seguro calcular a distância, os vértices já existem
+
+    // Atualiza painel inferior (esmaece os valores que estão desativados)
+    const textX = activeAxes.x ? vec.x : `<span style="opacity:0.4">${vec.x}</span>`;
+    const textY = activeAxes.y ? vec.y : `<span style="opacity:0.4">${vec.y}</span>`;
+    const textZ = activeAxes.z ? vec.z : `<span style="opacity:0.4">${vec.z}</span>`;
+
+    infoText.innerHTML = `
+        <div class="info-badge">V</div>
+        Vetor · [ X: ${textX}, Y: ${textY}, Z: ${textZ} ]
+    `;
+
+    updateTooltip(renderVec);
+}
+
+// Posiciona e checa lógica do rótulo/tooltip inteligente
+function updateTooltip(renderVec) {
+    // Usa o vetor lógico completo 'vec' para garantir que os dados não sejam perdidos
+    if (Number.isInteger(vec.x) && Number.isInteger(vec.y) && Number.isInteger(vec.z)) {
+        if (vec.x >= bounds.x.min && vec.x <= bounds.x.max &&
+            vec.y >= bounds.y.min && vec.y <= bounds.y.max &&
+            vec.z >= bounds.z.min && vec.z <= bounds.z.max) 
+        {
+            const cat = dicionarioVeiculos[vec.y.toString()];
+            if (cat && cat[vec.x.toString()]) {
+                const baseName = cat[vec.x.toString()];
+                const modifier = modificadorZ[vec.z.toString()] || "";
+                tooltip.innerText = baseName + modifier;
+                tooltip.classList.add('visible');
+
+                // Posiciona tooltip na ponta VISUAL do vetor
+                const tipPos = renderVec.clone();
+                tipPos.project(camera);
+                
+                const x = (tipPos.x * .5 + .5) * container.clientWidth;
+                const y = (tipPos.y * -.5 + .5) * container.clientHeight;
+                
+                tooltip.style.left = `${x}px`;
+                tooltip.style.top = `${y}px`;
+                return;
+            }
+        }
+    }
+    tooltip.classList.remove('visible');
+}
+
+// Atualiza a posição dos rótulos HTML (Textos fixos no mundo 3D)
+function updateHTMLLabels() {
+    htmlLabels.forEach(label => {
+        // Esconde os rótulos de eixos que estão desativados
+        if (!activeAxes[label.axis]) {
+            label.element.style.display = 'none';
+            return;
+        }
+
+        const pos = label.pos.clone();
+        pos.project(camera);
+        
+        // Se estiver atrás da câmera, escondemos
+        if (pos.z > 1) {
+            label.element.style.display = 'none';
+            return;
+        }
+        
+        label.element.style.display = 'block';
+        const x = (pos.x * .5 + .5) * container.clientWidth;
+        const y = (pos.y * -.5 + .5) * container.clientHeight;
+        
+        label.element.style.left = `${x}px`;
+        label.element.style.top = `${y}px`;
+    });
+}
+
+// Converte evento de mouse para coordenadas normalizadas
+function setMouseCoords(e) {
+    const rect = container.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+}
+
+// Eventos do Mouse
+container.addEventListener('pointerdown', (e) => {
+    setMouseCoords(e);
+    raycaster.setFromCamera(mouse, camera);
+
+    const testObjects = [];
+    if (activeAxes.x) testObjects.push(handleX);
+    if (activeAxes.y) testObjects.push(handleY);
+    if (activeAxes.z) testObjects.push(handleZ);
+
+    const intersects = raycaster.intersectObjects(testObjects);
+    
+    if (intersects.length > 0) {
+        // Desativa a rotação da câmera ao arrastar as alças
+        controls.enabled = false;
+        container.style.cursor = 'grabbing';
+        
+        const obj = intersects[0].object;
+        if (obj === handleX) draggedHandle = 'x';
+        if (obj === handleY) draggedHandle = 'y';
+        if (obj === handleZ) draggedHandle = 'z';
+
+        // Configura o plano imaginário para cálculo da interseção
+        // O plano encara a câmera e passa pela alça atual
+        dragPlane.setFromNormalAndCoplanarPoint(
+            camera.position.clone().sub(obj.position).normalize(),
+            obj.position
+        );
+    }
+});
+
+container.addEventListener('pointermove', (e) => {
+    setMouseCoords(e);
+    raycaster.setFromCamera(mouse, camera);
+
+    const testObjects = [];
+    if (activeAxes.x) testObjects.push(handleX);
+    if (activeAxes.y) testObjects.push(handleY);
+    if (activeAxes.z) testObjects.push(handleZ);
+
+    // Efeito hover
+    if (!draggedHandle) {
+        const intersects = raycaster.intersectObjects(testObjects);
+        container.style.cursor = intersects.length > 0 ? 'grab' : 'default';
+        return;
+    }
+
+    // Lógica do arraste
+    const intersectPoint = new THREE.Vector3();
+    raycaster.ray.intersectPlane(dragPlane, intersectPoint);
+
+    const snapPixels = 0.35; // Área magnética para atrair ao número inteiro
+
+    if (draggedHandle === 'x') {
+        let raw = intersectPoint.x;
+        let snapped = Math.round(raw);
+        if (Math.abs(raw - snapped) < snapPixels) raw = snapped;
+        vec.x = THREE.MathUtils.clamp(Number(raw.toFixed(2)), bounds.x.min, bounds.x.max);
+        
+        // Mantem o plano atualizado com a câmera
+        dragPlane.setFromNormalAndCoplanarPoint(camera.position.clone().sub(handleX.position).normalize(), handleX.position);
+
+    } else if (draggedHandle === 'y') {
+        let raw = intersectPoint.y;
+        let snapped = Math.round(raw);
+        if (Math.abs(raw - snapped) < snapPixels) raw = snapped;
+        vec.y = THREE.MathUtils.clamp(Number(raw.toFixed(2)), bounds.y.min, bounds.y.max);
+        
+        dragPlane.setFromNormalAndCoplanarPoint(camera.position.clone().sub(handleY.position).normalize(), handleY.position);
+
+    } else if (draggedHandle === 'z') {
+        let raw = intersectPoint.z;
+        let snapped = Math.round(raw);
+        if (Math.abs(raw - snapped) < snapPixels) raw = snapped;
+        vec.z = THREE.MathUtils.clamp(Number(raw.toFixed(2)), bounds.z.min, bounds.z.max);
+        
+        dragPlane.setFromNormalAndCoplanarPoint(camera.position.clone().sub(handleZ.position).normalize(), handleZ.position);
+    }
+
+    updateSceneState();
+});
+
+window.addEventListener('pointerup', () => {
+    draggedHandle = null;
+    controls.enabled = true; // Reativa a câmera
+    container.style.cursor = 'default';
+});
+
+// Resize responsivo
+window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
+
+// Loop de Animação
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update(); // Necessário para o Damping
+    updateHTMLLabels(); // Atualiza posições dos textos baseados na câmera
+    renderer.render(scene, camera);
+}
+
+// Iniciar
+updateSceneState();
+animate();
+
+</script>
+</body>
+</html>
